@@ -172,3 +172,8 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+
+# NuGet
+/src/.nuget/NuGet.exe
+/src/packages
+/packages
