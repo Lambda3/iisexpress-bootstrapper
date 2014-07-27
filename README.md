@@ -29,4 +29,4 @@ Basic sample
         
 Yes, simple as that. With this library you can easily setup IIS Express and write your acceptance tests for your web application using Selenium Webdriver, WatyN or whatever you want.
 
-Note: In order to work, the web application and the acceptance test project must be in the same solution folder.
+Note: In order to work, the web application and the acceptance test project must be in the same solution folder. You can see a full sample [here](https://github.com/abnerdasdores/iisexpress-bootstrapper-sample).
