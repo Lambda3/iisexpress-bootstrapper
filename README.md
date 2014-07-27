@@ -1,2 +1,32 @@
-iisexpress-bootstrapper
+IIS Express Bootstrapper
 =======================
+
+What is "IIS Express Bootstrapper"?
+----------------------------------
+IIS Express Bootstrapper is a very simple library built to make easy run IIS Express from your C# code for a web application project.
+
+It's a great library for acceptance tests.
+
+Basic sample
+--------------------------------
+
+    namespace IISExpressSample
+    {
+        [TestFixture]
+        public class YourTestClass
+        {
+            [Test]
+            public void YourTestMethod()
+            {
+                var host = new IISExpressHost("IISExpressBootstrapper.SampleWebApp", 8088);
+
+                // Your amazing test code goes here
+
+                host.Dispose();
+            }
+        }
+    }
+        
+Yes, simple as that. With this library you can easily setup IIS Express and write your acceptance tests for your web application using Selenium Webdriver, WatyN or whatever you want.
+
+Note: In order to work, the web application and the acceptance test project must be in the same solution folder.
