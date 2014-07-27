@@ -1,15 +1,14 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("IISExpressBootstrapper")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("IIS Express Bootstrapper")]
+[assembly: AssemblyDescription("IIS Express Bootstrapper is a very simple library built to make easy run IIS Express from your C# code for a web application project. It's a great library for acceptance tests.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("IISExpressBootstrapper")]
+[assembly: AssemblyProduct("IIS Express Bootstrapper")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
