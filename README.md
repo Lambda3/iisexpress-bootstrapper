@@ -7,6 +7,12 @@ IIS Express Bootstrapper is a very simple library built to make easy run IIS Exp
 
 It's a great library for acceptance tests.
 
+How do I install it?
+--------------------------------
+You can install this [package](https://www.nuget.org/packages/IISExpressBootstrapper/) via NuGet Package Manager or via Package Manager Console:
+
+    PM> Install-Package IISExpressBootstrapper
+
 Basic sample
 --------------------------------
 
