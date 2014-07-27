@@ -2,9 +2,11 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>$id$</id>
+        <title>IIS Express Bootstrapper</title>
         <version>1.0.0</version>
         <authors>Abner das Dores</authors>
         <description>$description$</description>
         <projectUrl>https://github.com/abnerdasdores/iisexpress-bootstrapper</projectUrl>
+        <licenseUrl>https://github.com/abnerdasdores/iisexpress-bootstrapper/blob/master/LICENSE</licenseUrl>
     </metadata>
 </package>
