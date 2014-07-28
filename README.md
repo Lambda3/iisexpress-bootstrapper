@@ -24,6 +24,7 @@ Basic sample
             [Test]
             public void YourTestMethod()
             {
+                // You must replace "IISExpressBootstrapper.SampleWebApp" parameters for your web Application Name
                 var host = new IISExpressHost("IISExpressBootstrapper.SampleWebApp", 8088);
 
                 // Your amazing test code goes here
