@@ -29,6 +29,9 @@ namespace IISExpressBootstrapper
         {
             var directory = new DirectoryInfo(Environment.CurrentDirectory);
 
+            if (IsTFSBuild(directory))
+                return new DirectoryInfo(directory.FullName + "\\_PublishedWebsites").FullName;
+
             while (directory != null && directory.GetFiles("*.sln").Length == 0)
             {
                 directory = directory.Parent;
@@ -39,6 +42,17 @@ namespace IISExpressBootstrapper
             
             return directory.FullName;
 
+        }
+
+        private static bool IsTFSBuild(DirectoryInfo currentDirectory)
+        {
+            if (currentDirectory != null && currentDirectory.Name.ToLower().Equals("bin"))
+            {
+                if (Directory.Exists(currentDirectory.FullName + "\\_PublishedWebsites"))
+                    return true;
+            }
+            
+            return false;
         }
 
         private static string FindSubFolderPath(string rootFolderPath, string folderName)
