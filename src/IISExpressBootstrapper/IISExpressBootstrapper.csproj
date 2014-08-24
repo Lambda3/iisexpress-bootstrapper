@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IISExpressHost.cs" />
+    <Compile Include="Parameters.cs" />
     <Compile Include="IISExpressProcess.cs" />
     <Compile Include="ProcessRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

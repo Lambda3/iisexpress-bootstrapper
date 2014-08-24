@@ -61,6 +61,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="IISExpressHostTests.cs" />
+    <Compile Include="ParametersTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
