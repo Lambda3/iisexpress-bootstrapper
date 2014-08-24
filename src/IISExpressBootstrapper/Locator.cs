@@ -4,30 +4,21 @@ using System.Linq;
 
 namespace IISExpressBootstrapper
 {
-    internal class WebApplication
+    public class Locator
     {
-        public readonly string Name;
-        public readonly string FullPath;
-
-        public WebApplication(string name)
-        {
-            Name = name;
-            FullPath = GetFullPath();
-        }
-
-        private string GetFullPath()
+        public static string GetFullPath(string webApplicationName)
         {
             var solutionFolder = GetSolutionFolderPath();
-            var projectPath = FindSubFolderPath(solutionFolder, Name);
+            var projectPath = FindSubFolderPath(solutionFolder, webApplicationName);
 
             return projectPath;
         }
-        
+
         private static string GetSolutionFolderPath()
         {
             var directory = new DirectoryInfo(Environment.CurrentDirectory);
 
-            if (IsTFSBuild(directory))
+            if (IsTfsBuild(directory))
                 return new DirectoryInfo(directory.FullName + "\\_PublishedWebsites").FullName;
 
             while (directory != null && directory.GetFiles("*.sln").Length == 0)
@@ -36,21 +27,16 @@ namespace IISExpressBootstrapper
             }
 
             if (directory == null)
-                throw new DirectoryNotFoundException(); 
-            
-            return directory.FullName;
+                throw new DirectoryNotFoundException();
 
+            return directory.FullName;
         }
 
-        private static bool IsTFSBuild(DirectoryInfo currentDirectory)
+        private static bool IsTfsBuild(FileSystemInfo currentDirectory)
         {
-            if (currentDirectory != null && currentDirectory.Name.ToLower().Equals("bin"))
-            {
-                if (Directory.Exists(currentDirectory.FullName + "\\_PublishedWebsites"))
-                    return true;
-            }
+            if (currentDirectory == null || !currentDirectory.Name.ToLower().Equals("bin")) return false;
             
-            return false;
+            return Directory.Exists(currentDirectory.FullName + "\\_PublishedWebsites");
         }
 
         private static string FindSubFolderPath(string rootFolderPath, string folderName)
@@ -63,7 +49,7 @@ namespace IISExpressBootstrapper
 
             if (directory == null)
             {
-                throw new DirectoryNotFoundException();
+                throw new DirectoryNotFoundException("Could not infer the web application folder path.");
             }
 
             return directory.FullName;

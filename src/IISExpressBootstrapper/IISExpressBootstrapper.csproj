@@ -44,11 +44,11 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="IISExpressHost.cs" />
     <Compile Include="IISExpressNotFoundException.cs" />
+    <Compile Include="Locator.cs" />
     <Compile Include="Parameters.cs" />
     <Compile Include="IISExpressProcess.cs" />
     <Compile Include="ProcessRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WebApplication.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="IISExpressBootstrapper.nuspec" />

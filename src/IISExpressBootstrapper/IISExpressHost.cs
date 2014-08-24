@@ -7,17 +7,15 @@ namespace IISExpressBootstrapper
     {
         private readonly IISExpressProcess process;
 
-        public IISExpressHost(string webApplicationName, int portNumber, string iisExpressPath = null, IDictionary<string, string> environmentVariables = null)
+        public IISExpressHost(string webApplicationName, int portNumber, IDictionary<string, string> environmentVariables = null, string iisExpressPath = null)
         {
-            var webApplication = new WebApplication(webApplicationName);
-
             var configuration = new Configuration
             {
                 IISExpressPath = iisExpressPath,
                 EnvironmentVariables = environmentVariables,
                 ProcessParameters = new PathParameters
                 {
-                    Path = webApplication.FullPath,
+                    Path = Locator.GetFullPath(webApplicationName),
                     Port = portNumber,
                     Systray = false
                 }

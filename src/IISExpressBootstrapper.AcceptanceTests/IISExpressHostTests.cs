@@ -19,7 +19,7 @@ namespace IISExpressBootstrapper.AcceptanceTests
         {
             environmentVariables = new Dictionary<string, string> { { "Foo1", "Bar1" }, { "Sample2", "It work's!" } };
 
-            host = new IISExpressHost("IISExpressBootstrapper.SampleWebApp", 8088, environmentVariables: environmentVariables);
+            host = new IISExpressHost("IISExpressBootstrapper.SampleWebApp", 8088, environmentVariables);
         }
 
         [Test]
@@ -67,6 +67,15 @@ namespace IISExpressBootstrapper.AcceptanceTests
             Action action = () => new IISExpressHost(config);
 
             action.ShouldThrow<IISExpressNotFoundException>();
+        }
+
+        [Test]
+        public void ThrowExceptionWhenNotFoundWebApplicationPath()
+        {
+            Action action = () => new IISExpressHost("Foo.Bar.Web", 8088);
+
+            action.ShouldThrow<DirectoryNotFoundException>()
+                .WithMessage("Could not infer the web application folder path.");
         }
     }
 }
