@@ -41,7 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration.cs" />
     <Compile Include="IISExpressHost.cs" />
+    <Compile Include="IISExpressNotFoundException.cs" />
     <Compile Include="Parameters.cs" />
     <Compile Include="IISExpressProcess.cs" />
     <Compile Include="ProcessRunner.cs" />

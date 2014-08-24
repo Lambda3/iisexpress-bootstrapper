@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace IISExpressBootstrapper
@@ -8,15 +9,15 @@ namespace IISExpressBootstrapper
         private readonly ProcessStartInfo processStartInfo;
         private Process process;
 
-        public static ProcessRunner Run(string exePath, string arguments = "")
+        public static ProcessRunner Run(string exePath, string arguments = "", IDictionary<string, string> environmentVariables = null)
         {
-            var processRunner = new ProcessRunner(exePath, arguments);
+            var processRunner = new ProcessRunner(exePath, arguments, environmentVariables);
             processRunner.Start();
 
             return processRunner;
         }
 
-        private ProcessRunner(string exePath, string arguments)
+        private ProcessRunner(string exePath, string arguments, IEnumerable<KeyValuePair<string, string>> environmentVariables)
         {
             processStartInfo = new ProcessStartInfo(exePath)
             {
@@ -24,6 +25,13 @@ namespace IISExpressBootstrapper
                 LoadUserProfile = false,
                 UseShellExecute = false
             };
+            
+            if (environmentVariables == null) return;
+            
+            foreach (var environmentVariable in environmentVariables)
+            {
+                processStartInfo.EnvironmentVariables.Add(environmentVariable.Key, environmentVariable.Value);
+            }
         }
 
         public void Start()

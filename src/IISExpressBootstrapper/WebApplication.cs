@@ -7,13 +7,11 @@ namespace IISExpressBootstrapper
     internal class WebApplication
     {
         public readonly string Name;
-        public readonly int PortNumber;
         public readonly string FullPath;
 
-        public WebApplication(string name, int portNumber)
+        public WebApplication(string name)
         {
             Name = name;
-            PortNumber = portNumber;
             FullPath = GetFullPath();
         }
 

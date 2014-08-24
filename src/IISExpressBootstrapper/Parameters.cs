@@ -19,7 +19,7 @@ namespace IISExpressBootstrapper
     public abstract class Parameters
     {
         /// <summary>
-        /// Enables or disables the system tray application. The default value is true.
+        /// Enables or disables the system tray application. The default value is false.
         /// </summary>
         public bool? Systray { get; set; }
 

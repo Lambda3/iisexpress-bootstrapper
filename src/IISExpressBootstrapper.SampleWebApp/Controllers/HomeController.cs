@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 
 namespace IISExpressBootstrapper.SampleWebApp.Controllers
 {
@@ -7,6 +8,11 @@ namespace IISExpressBootstrapper.SampleWebApp.Controllers
         public ActionResult Index()
         {
             return Content("It work's!");
+        }
+
+        public ActionResult EnvironmentVariables(string name)
+        {
+            return Content(Environment.GetEnvironmentVariable(name));
         }
     }
 }
