@@ -62,9 +62,7 @@ namespace IISExpressBootstrapper.AcceptanceTests
         {
             const string iisExpressPath = @"Z:\Foo\Bar\iis.exe";
 
-            var config = new Configuration { IISExpressPath = iisExpressPath };
-
-            Action action = () => new IISExpressHost(config);
+            Action action = () => new IISExpressHost(null, iisExpressPath: iisExpressPath);
 
             action.ShouldThrow<IISExpressNotFoundException>();
         }

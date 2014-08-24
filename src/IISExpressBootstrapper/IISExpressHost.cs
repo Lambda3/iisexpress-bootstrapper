@@ -24,8 +24,14 @@ namespace IISExpressBootstrapper
             process = new IISExpressProcess(configuration);
         }
 
-        public IISExpressHost(Configuration configuration)
+        public IISExpressHost(Parameters parameters, IDictionary<string, string> environmentVariables = null, string iisExpressPath = null)
         {
+            var configuration = new Configuration
+            {
+                EnvironmentVariables = environmentVariables,
+                IISExpressPath = iisExpressPath,
+                ProcessParameters = parameters
+            };
             process = new IISExpressProcess(configuration);
         }
 
