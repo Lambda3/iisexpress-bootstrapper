@@ -5,9 +5,22 @@ namespace IISExpressBootstrapper
 {
     public class IISExpressHost : IDisposable
     {
-        private readonly IISExpressProcess process;
+        public static IISExpressHost Start(string webApplicationName, int portNumber,
+            IDictionary<string, string> environmentVariables = null, string iisExpressPath = null)
+        {
+            return new IISExpressHost(webApplicationName, portNumber, environmentVariables, iisExpressPath);
+        }
 
-        public IISExpressHost(string webApplicationName, int portNumber, IDictionary<string, string> environmentVariables = null, string iisExpressPath = null)
+        public static IISExpressHost Start(Parameters parameters, IDictionary<string, string> environmentVariables = null,
+            string iisExpressPath = null)
+        {
+            return new IISExpressHost(parameters, environmentVariables, iisExpressPath);
+        }
+
+        private IISExpressProcess process;
+
+        public IISExpressHost(string webApplicationName, int portNumber,
+            IDictionary<string, string> environmentVariables = null, string iisExpressPath = null)
         {
             var configuration = new Configuration
             {
@@ -24,7 +37,8 @@ namespace IISExpressBootstrapper
             process = new IISExpressProcess(configuration);
         }
 
-        public IISExpressHost(Parameters parameters, IDictionary<string, string> environmentVariables = null, string iisExpressPath = null)
+        private IISExpressHost(Parameters parameters, IDictionary<string, string> environmentVariables = null,
+            string iisExpressPath = null)
         {
             var configuration = new Configuration
             {
@@ -37,7 +51,17 @@ namespace IISExpressBootstrapper
 
         public void Dispose()
         {
-            process.Dispose();
+            if (process == null) return;
+
+            var toDispose = process;
+            process = null;
+
+            toDispose.Dispose();
+        }
+
+        ~IISExpressHost()
+        {
+            Dispose();
         }
     }
 }
