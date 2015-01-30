@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web.Mvc;
 
-namespace IISExpressBootstrapper.SampleWebApp.Controllers
+namespace IISExpressBootstrapper.SampleApp.Controllers
 {
     public class HomeController : Controller
     {

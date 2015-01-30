@@ -13,12 +13,12 @@ namespace IISExpressBootstrapper.AcceptanceTests
     {
         private IDictionary<string, string> environmentVariables;
 
-        [TestFixtureSetUp]
+        [SetUp]
         public void SetUp()
         {
             environmentVariables = new Dictionary<string, string> { { "Foo1", "Bar1" }, { "Sample2", "It work's!" } };
 
-            IISExpressHost.Start("IISExpressBootstrapper.SampleWebApp", 8088, environmentVariables);
+            IISExpressHost.Start("IISExpressBootstrapper.SampleApp", 8088, environmentVariables);
         }
 
         [Test]
@@ -29,6 +29,19 @@ namespace IISExpressBootstrapper.AcceptanceTests
             var response = (HttpWebResponse)request.GetResponse();
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        [Test]
+        public void ShouldRunTheWebApiApplication()
+        {
+            var request = (HttpWebRequest)WebRequest.Create("http://localhost:8088/api/sampleapi/10");
+
+            var response = (HttpWebResponse)request.GetResponse();
+            var sr = new StreamReader(response.GetResponseStream(), encoding: Encoding.UTF8);
+            var content = sr.ReadToEnd();
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            content.Should().Be("\"You send me 10\"");
         }
 
         [Test]
