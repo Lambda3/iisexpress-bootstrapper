@@ -8,23 +8,27 @@ namespace IISExpressBootstrapper
     {
         private readonly ProcessStartInfo processStartInfo;
         private Process process;
+        private readonly Action<string> output;
 
-        public static ProcessRunner Run(string exePath, string arguments = "", IDictionary<string, string> environmentVariables = null)
+        public static ProcessRunner Run(string exePath, string arguments = "", IDictionary<string, string> environmentVariables = null, Action<string> output = null)
         {
-            var processRunner = new ProcessRunner(exePath, arguments, environmentVariables);
+            var processRunner = new ProcessRunner(exePath, arguments, environmentVariables, output);
             processRunner.Start();
 
             return processRunner;
         }
 
-        private ProcessRunner(string exePath, string arguments, IEnumerable<KeyValuePair<string, string>> environmentVariables)
+        private ProcessRunner(string exePath, string arguments, IEnumerable<KeyValuePair<string, string>> environmentVariables, Action<string> output)
         {
             processStartInfo = new ProcessStartInfo(exePath)
             {
                 Arguments = arguments,
                 LoadUserProfile = false,
-                UseShellExecute = false
+                UseShellExecute = false,
+                RedirectStandardOutput = output != null
             };
+
+            this.output = output ?? (_ => { });
             
             if (environmentVariables == null) return;
             
@@ -37,13 +41,29 @@ namespace IISExpressBootstrapper
         public void Start()
         {
             process = Process.Start(processStartInfo);
+            if (process != null && processStartInfo.RedirectStandardOutput)
+            {
+                var reader = process.StandardOutput;
+                while (reader.Peek() > -1)
+                {
+                    var message = reader.ReadToEnd();
+                    output(message);
+                }
+            }
         }
 
         public void Dispose()
         {
             if (process == null) return;
 
-            process.Kill();
+            try
+            {
+                process.Kill();
+            }
+            catch (InvalidOperationException)
+            {
+                // Will throw InvalidOperationException if process has already exited.
+            }
         }
     }
 }
