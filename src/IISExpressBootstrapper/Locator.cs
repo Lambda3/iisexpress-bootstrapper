@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace IISExpressBootstrapper
 {
@@ -16,7 +17,7 @@ namespace IISExpressBootstrapper
 
         private static string GetSolutionFolderPath()
         {
-            var directory = new DirectoryInfo(Environment.CurrentDirectory);
+            var directory = new DirectoryInfo(GetAssemblyDirectory());
 
             if (IsTfsBuild(directory))
                 return new DirectoryInfo(directory.FullName + "\\_PublishedWebsites").FullName;
@@ -30,6 +31,14 @@ namespace IISExpressBootstrapper
                 throw new DirectoryNotFoundException();
 
             return directory.FullName;
+        }
+
+        public static string GetAssemblyDirectory()
+        {
+            var codeBase = Assembly.GetExecutingAssembly().CodeBase;
+            var uri = new UriBuilder(codeBase);
+            var path = Uri.UnescapeDataString(uri.Path);
+            return Path.GetDirectoryName(path);
         }
 
         private static bool IsTfsBuild(FileSystemInfo currentDirectory)
