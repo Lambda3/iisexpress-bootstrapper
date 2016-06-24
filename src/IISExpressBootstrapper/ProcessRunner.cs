@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace IISExpressBootstrapper
 {
@@ -41,7 +42,7 @@ namespace IISExpressBootstrapper
 
         public void Dispose()
         {
-            if (process == null) return;
+            if (process == null || !Process.GetProcesses().Any(x => x.Id == process.Id)) return;
 
             process.Kill();
         }
