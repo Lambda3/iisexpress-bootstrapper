@@ -18,7 +18,8 @@ namespace IISExpressBootstrapper
                 throw new IISExpressNotFoundException();
             }
 
-            process = ProcessRunner.Run(configuration.IISExpressPath, configuration.ProcessParameters.ToString(), configuration.EnvironmentVariables);
+            process = ProcessRunner.Run(configuration.IISExpressPath, configuration.ProcessParameters.ToString(), configuration.EnvironmentVariables, 
+                configuration.Output);
         }
 
         public void Dispose()

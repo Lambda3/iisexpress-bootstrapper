@@ -83,5 +83,16 @@ namespace IISExpressBootstrapper.AcceptanceTests
             action.ShouldThrow<DirectoryNotFoundException>()
                 .WithMessage("Could not infer the web application folder path.");
         }
+
+        [Test]
+        public void StartingWithInvalidConfigurationShouldWriteMessage()
+        {
+            string s = null;
+
+            IISExpressHost.Start(new ConfigFileParameters { ConfigFile = "", SiteName = "Does not exist" },
+                output: message => { s = message; });
+
+            s.Should().NotBeNullOrEmpty();
+        }
     }
 }

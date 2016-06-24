@@ -6,21 +6,21 @@ namespace IISExpressBootstrapper
     public class IISExpressHost : IDisposable
     {
         public static IISExpressHost Start(string webApplicationName, int portNumber,
-            IDictionary<string, string> environmentVariables = null, string iisExpressPath = null)
+            IDictionary<string, string> environmentVariables = null, string iisExpressPath = null, Action<string> output = null)
         {
-            return new IISExpressHost(webApplicationName, portNumber, environmentVariables, iisExpressPath);
+            return new IISExpressHost(webApplicationName, portNumber, environmentVariables, iisExpressPath, output);
         }
 
         public static IISExpressHost Start(Parameters parameters, IDictionary<string, string> environmentVariables = null,
-            string iisExpressPath = null)
+            string iisExpressPath = null, Action<string> output = null)
         {
-            return new IISExpressHost(parameters, environmentVariables, iisExpressPath);
+            return new IISExpressHost(parameters, environmentVariables, iisExpressPath, output);
         }
 
         private IISExpressProcess process;
 
         public IISExpressHost(string webApplicationName, int portNumber,
-            IDictionary<string, string> environmentVariables = null, string iisExpressPath = null)
+            IDictionary<string, string> environmentVariables = null, string iisExpressPath = null, Action<string> output = null)
         {
             var configuration = new Configuration
             {
@@ -31,20 +31,22 @@ namespace IISExpressBootstrapper
                     Path = Locator.GetFullPath(webApplicationName),
                     Port = portNumber,
                     Systray = false
-                }
+                },
+                Output = output
             };
 
             process = new IISExpressProcess(configuration);
         }
 
         private IISExpressHost(Parameters parameters, IDictionary<string, string> environmentVariables = null,
-            string iisExpressPath = null)
+            string iisExpressPath = null, Action<string> output = null)
         {
             var configuration = new Configuration
             {
                 EnvironmentVariables = environmentVariables,
                 IISExpressPath = iisExpressPath,
-                ProcessParameters = parameters
+                ProcessParameters = parameters,
+                Output = output
             };
             process = new IISExpressProcess(configuration);
         }
