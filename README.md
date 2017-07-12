@@ -1,14 +1,18 @@
 IIS Express Bootstrapper
 =======================
 
+[![CodeFactor](https://www.codefactor.io/repository/github/abnerdasdores/iisexpress-bootstrapper/badge)](https://www.codefactor.io/repository/github/abnerdasdores/iisexpress-bootstrapper)
+
 What is "IIS Express Bootstrapper"?
 ----------------------------------
+
 IIS Express Bootstrapper is a very simple library built to make easy run IIS Express from your C# code for a web application project.
 
 It's a great library for acceptance tests.
 
 How do I install it?
 --------------------------------
+
 You can install this [package](https://www.nuget.org/packages/IISExpressBootstrapper/) via NuGet Package Manager or via Package Manager Console:
 
     PM> Install-Package IISExpressBootstrapper
