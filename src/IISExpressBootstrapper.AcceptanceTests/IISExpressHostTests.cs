@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
+using System.Diagnostics;
 using System.Net;
 
 namespace IISExpressBootstrapper.AcceptanceTests
@@ -8,14 +9,18 @@ namespace IISExpressBootstrapper.AcceptanceTests
     public class IISExpressHostTests
     {
         private IDictionary<string, string> environmentVariables;
+        private IISExpressHost host;
 
-        [SetUp]
+        [OneTimeSetUp]
         public void SetUp()
         {
             environmentVariables = new Dictionary<string, string> { { "Foo1", "Bar1" }, { "Sample2", "It work's!" } };
 
-            IISExpressHost.Start("IISExpressBootstrapper.SampleApp", 8088, environmentVariables);
+            host = IISExpressHost.Start("IISExpressBootstrapper.SampleApp", 8088, environmentVariables);
         }
+
+        [OneTimeTearDown]
+        public void TearDown() => host?.Dispose();
 
         [Test]
         public async Task ShouldRunTheWebApplication()
@@ -75,6 +80,28 @@ namespace IISExpressBootstrapper.AcceptanceTests
             IISExpressHost.Start(new ConfigFileParameters { ConfigFile = "", SiteName = "Does not exist" },
                 output: message => { s = message; });
             s.Should().NotBeNullOrEmpty();
+        }
+
+        [Test]
+        public void IfProcessIsRunningShouldShowIt() => host.IsRunning.Should().BeTrue();
+
+        [Test]
+        public void IfProcessIsRunningShouldShowProcessId() => host.ProcessId.Should().BeGreaterThan(0);
+
+        [Test]
+        public void IfProcessIsRunningShouldShowInProcessesList()
+        {
+            using var process = Process.GetProcessById(host.ProcessId);
+            process.Should().NotBeNull();
+        }
+
+        [Test]
+        public void StartingAndKillingAProcessShouldShowHostNotToBeRunning()
+        {
+            var brokenHost = IISExpressHost.Start(new ConfigFileParameters { ConfigFile = "", SiteName = "Does not exist" });
+            using var process = Process.GetProcessById(brokenHost.ProcessId);
+            process.Kill();
+            brokenHost.IsRunning.Should().BeFalse();
         }
     }
 }

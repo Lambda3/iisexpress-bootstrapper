@@ -3,21 +3,21 @@ using System.Collections.Generic;
 
 namespace IISExpressBootstrapper
 {
-    public class IISExpressHost : IDisposable
+    public sealed class IISExpressHost : IDisposable
     {
         public static IISExpressHost Start(string webApplicationName, int portNumber,
-            IDictionary<string, string> environmentVariables = null, string iisExpressPath = null, Action<string> output = null)
-        {
-            return new IISExpressHost(webApplicationName, portNumber, environmentVariables, iisExpressPath, output);
-        }
+            IDictionary<string, string> environmentVariables = null, string iisExpressPath = null, Action<string> output = null) =>
+            new IISExpressHost(webApplicationName, portNumber, environmentVariables, iisExpressPath, output);
 
         public static IISExpressHost Start(Parameters parameters, IDictionary<string, string> environmentVariables = null,
-            string iisExpressPath = null, Action<string> output = null)
-        {
-            return new IISExpressHost(parameters, environmentVariables, iisExpressPath, output);
-        }
+            string iisExpressPath = null, Action<string> output = null) =>
+            new IISExpressHost(parameters, environmentVariables, iisExpressPath, output);
 
         private IISExpressProcess process;
+
+        public bool IsRunning => process.IsRunning;
+
+        public int ProcessId => process.ProcessId;
 
         public IISExpressHost(string webApplicationName, int portNumber,
             IDictionary<string, string> environmentVariables = null, string iisExpressPath = null, Action<string> output = null)
@@ -59,11 +59,6 @@ namespace IISExpressBootstrapper
             process = null;
 
             toDispose.Dispose();
-        }
-
-        ~IISExpressHost()
-        {
-            Dispose();
         }
     }
 }

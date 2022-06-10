@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace IISExpressBootstrapper
 {
-    internal class ProcessRunner : IDisposable
+    internal sealed class ProcessRunner : IDisposable
     {
         private readonly ProcessStartInfo processStartInfo;
         private Process process;
         private readonly Action<string> output;
+
+        public bool IsRunning => process != null && !process.HasExited;
+
+        public int ProcessId => process == null ? -1 : process.Id;
 
         public static ProcessRunner Run(string exePath, string arguments = "", IDictionary<string, string> environmentVariables = null, Action<string> output = null)
         {
@@ -30,9 +33,9 @@ namespace IISExpressBootstrapper
             };
 
             this.output = output ?? (_ => { });
-            
+
             if (environmentVariables == null) return;
-            
+
             foreach (var environmentVariable in environmentVariables)
             {
                 processStartInfo.EnvironmentVariables.Add(environmentVariable.Key, environmentVariable.Value);
@@ -55,16 +58,18 @@ namespace IISExpressBootstrapper
 
         public void Dispose()
         {
-            if (process == null || !Process.GetProcesses().Any(x => x.Id == process.Id)) return;
+            if (process == null) return;
 
             try
             {
-                process.Kill();
+                if (!process.HasExited)
+                    process.Kill();
             }
             catch (InvalidOperationException)
             {
                 // Will throw InvalidOperationException if process has already exited.
             }
+            process.Dispose();
         }
     }
 }

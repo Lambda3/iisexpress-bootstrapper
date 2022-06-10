@@ -3,9 +3,13 @@ using System.IO;
 
 namespace IISExpressBootstrapper
 {
-    internal class IISExpressProcess : IDisposable
+    internal sealed class IISExpressProcess : IDisposable
     {
         private readonly ProcessRunner process;
+
+        public bool IsRunning => process.IsRunning;
+
+        public int ProcessId => process.ProcessId;
 
         public IISExpressProcess(Configuration configuration)
         {
@@ -18,21 +22,20 @@ namespace IISExpressBootstrapper
                 throw new IISExpressNotFoundException();
             }
 
-            process = ProcessRunner.Run(configuration.IISExpressPath, configuration.ProcessParameters.ToString(), configuration.EnvironmentVariables, 
+            process = ProcessRunner.Run(configuration.IISExpressPath, configuration.ProcessParameters.ToString(), configuration.EnvironmentVariables,
                 configuration.Output);
         }
 
-        public void Dispose()
-        {
-            process.Dispose();
-        }
+        public void Dispose() => process.Dispose();
 
         private static string GetDefaultIISExpressPath()
         {
-            const string iisExpressX86Path = @"c:\program files (x86)\IIS Express\IISExpress.exe";
-            const string iisExpressX64Path = @"c:\program files\IIS Express\IISExpress.exe";
-
-            return File.Exists(iisExpressX86Path) ? iisExpressX86Path : iisExpressX64Path;
+            var iisExpressPath = $@"{Environment.GetEnvironmentVariable("ProgramFiles")}\IIS Express\IISExpress.exe";
+            var programFilesX86 = Environment.GetEnvironmentVariable("ProgramFiles(x86)");
+            if (programFilesX86 == null)
+                return iisExpressPath;
+            var iisExpressX86Path = $@"{programFilesX86}\IIS Express\IISExpress.exe";
+            return File.Exists(iisExpressX86Path) ? iisExpressX86Path : iisExpressPath;
         }
     }
 }
