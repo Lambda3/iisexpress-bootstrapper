@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<Title>IIS Express Bootstrapper</Title>
 		<Authors>Abner das Dores</Authors>
 		<Version>2.0.0</Version>
@@ -8,7 +9,6 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Description>IIS Express Bootstrapper is a very simple library built to make easy run IIS Express from your C# code for a web application project. It's a great library for acceptance tests.</Description>
 		<Product>IIS Express Bootstrapper</Product>
-		<Copyright>Copyright © 2014-2022</Copyright>
 	</PropertyGroup>
 	<ItemGroup>
 	</ItemGroup>

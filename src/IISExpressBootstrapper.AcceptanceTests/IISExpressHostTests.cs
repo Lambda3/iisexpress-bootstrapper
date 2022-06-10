@@ -1,10 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net;
-using System.Text;
 
 namespace IISExpressBootstrapper.AcceptanceTests
 {
@@ -22,45 +18,36 @@ namespace IISExpressBootstrapper.AcceptanceTests
         }
 
         [Test]
-        public void ShouldRunTheWebApplication()
+        public async Task ShouldRunTheWebApplication()
         {
-            var request = (HttpWebRequest)WebRequest.Create("http://localhost:8088/");
-
-            var response = (HttpWebResponse)request.GetResponse();
-
+            using var client = new HttpClient();
+            var response = await client.GetAsync("http://localhost:8088/");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [Test]
-        public void ShouldRunTheWebApiApplication()
+        public async Task ShouldRunTheWebApiApplication()
         {
-            var request = (HttpWebRequest)WebRequest.Create("http://localhost:8088/api/sampleapi/10");
-
-            var response = (HttpWebResponse)request.GetResponse();
-            var sr = new StreamReader(response.GetResponseStream(), encoding: Encoding.UTF8);
-            var content = sr.ReadToEnd();
-
+            using var client = new HttpClient();
+            var response = await client.GetAsync("http://localhost:8088/api/sampleapi/10");
+            var content = await response.Content.ReadAsStringAsync();
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             content.Should().Be("\"You send me 10\"");
         }
 
         [Test]
-        public void ShouldSetEnvironmentVariables()
+        public async Task ShouldSetEnvironmentVariablesAsync()
         {
-            TestEnvironmentVariable("Foo1", environmentVariables["Foo1"]);
-            TestEnvironmentVariable("Sample2", environmentVariables["Sample2"]);
+            await TestEnvironmentVariableAsync("Foo1", environmentVariables["Foo1"]);
+            await TestEnvironmentVariableAsync("Sample2", environmentVariables["Sample2"]);
         }
 
-        private static void TestEnvironmentVariable(string variable, string expected)
+        private static async Task TestEnvironmentVariableAsync(string variable, string expected)
         {
             const string url = "http://localhost:8088/Home/EnvironmentVariables?name={0}";
-
-            var request = (HttpWebRequest) WebRequest.Create(string.Format(url, variable));
-
-            var response = (HttpWebResponse) request.GetResponse();
-            var sr = new StreamReader(response.GetResponseStream(), encoding: Encoding.UTF8);
-            var content = sr.ReadToEnd();
-
+            using var client = new HttpClient();
+            var response = await client.GetAsync(string.Format(url, variable));
+            var content = await response.Content.ReadAsStringAsync();
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             content.Should().Be(expected);
         }
@@ -69,18 +56,15 @@ namespace IISExpressBootstrapper.AcceptanceTests
         public void ThrowExceptionWhenNotFoundIISExpressPath()
         {
             const string iisExpressPath = @"Z:\Foo\Bar\iis.exe";
-
-            Action action = () => IISExpressHost.Start(null, iisExpressPath: iisExpressPath);
-
-            action.ShouldThrow<IISExpressNotFoundException>();
+            var action = () => IISExpressHost.Start(null, iisExpressPath: iisExpressPath);
+            action.Should().Throw<IISExpressNotFoundException>();
         }
 
         [Test]
         public void ThrowExceptionWhenNotFoundWebApplicationPath()
         {
-            Action action = () => IISExpressHost.Start("Foo.Bar.Web", 8088);
-
-            action.ShouldThrow<DirectoryNotFoundException>()
+            var action = () => IISExpressHost.Start("Foo.Bar.Web", 8088);
+            action.Should().Throw<DirectoryNotFoundException>()
                 .WithMessage("Could not infer the web application folder path.");
         }
 
@@ -88,10 +72,8 @@ namespace IISExpressBootstrapper.AcceptanceTests
         public void StartingWithInvalidConfigurationShouldWriteMessage()
         {
             string s = null;
-
             IISExpressHost.Start(new ConfigFileParameters { ConfigFile = "", SiteName = "Does not exist" },
                 output: message => { s = message; });
-
             s.Should().NotBeNullOrEmpty();
         }
     }
