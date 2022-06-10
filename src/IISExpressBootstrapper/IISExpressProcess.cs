@@ -14,13 +14,9 @@ namespace IISExpressBootstrapper
         public IISExpressProcess(Configuration configuration)
         {
             if (string.IsNullOrWhiteSpace(configuration.IISExpressPath))
-            {
                 configuration.IISExpressPath = GetDefaultIISExpressPath();
-            }
             if (!File.Exists(configuration.IISExpressPath))
-            {
                 throw new IISExpressNotFoundException();
-            }
 
             process = ProcessRunner.Run(configuration.IISExpressPath, configuration.ProcessParameters.ToString(), configuration.EnvironmentVariables,
                 configuration.Output);

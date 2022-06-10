@@ -23,14 +23,9 @@ namespace IISExpressBootstrapper
                 return new DirectoryInfo(directory.FullName + "\\_PublishedWebsites").FullName;
 
             while (directory != null && directory.GetFiles("*.sln").Length == 0)
-            {
                 directory = directory.Parent;
-            }
 
-            if (directory == null)
-                throw new DirectoryNotFoundException();
-
-            return directory.FullName;
+            return directory == null ? throw new DirectoryNotFoundException() : directory.FullName;
         }
 
         public static string GetAssemblyDirectory()
@@ -41,27 +36,20 @@ namespace IISExpressBootstrapper
             return Path.GetDirectoryName(path);
         }
 
-        private static bool IsTfsBuild(FileSystemInfo currentDirectory)
-        {
-            if (currentDirectory == null || !currentDirectory.Name.ToLower().Equals("bin")) return false;
-            
-            return Directory.Exists(currentDirectory.FullName + "\\_PublishedWebsites");
-        }
+        private static bool IsTfsBuild(FileSystemInfo currentDirectory) =>
+            currentDirectory != null && currentDirectory.Name.ToLower().Equals("bin") && Directory.Exists(currentDirectory.FullName + "\\_PublishedWebsites");
 
         private static string FindSubFolderPath(string rootFolderPath, string folderName)
         {
             var directory = new DirectoryInfo(rootFolderPath);
 
-            directory = (directory.GetDirectories("*", SearchOption.AllDirectories)
-                .Where(folder => String.Equals(folder.Name, folderName, StringComparison.CurrentCultureIgnoreCase)))
+            directory = directory.GetDirectories("*", SearchOption.AllDirectories)
+                .Where(folder => string.Equals(folder.Name, folderName, StringComparison.CurrentCultureIgnoreCase))
                 .FirstOrDefault();
 
-            if (directory == null)
-            {
-                throw new DirectoryNotFoundException("Could not infer the web application folder path.");
-            }
-
-            return directory.FullName;
+            return directory == null
+                ? throw new DirectoryNotFoundException("Could not infer the web application folder path.")
+                : directory.FullName;
         }
     }
 }

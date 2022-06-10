@@ -34,7 +34,8 @@ namespace IISExpressBootstrapper
 
             this.output = output ?? (_ => { });
 
-            if (environmentVariables == null) return;
+            if (environmentVariables == null)
+                return;
 
             foreach (var environmentVariable in environmentVariables)
             {
@@ -58,7 +59,8 @@ namespace IISExpressBootstrapper
 
         public void Dispose()
         {
-            if (process == null) return;
+            if (process == null)
+                return;
 
             try
             {

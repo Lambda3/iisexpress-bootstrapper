@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "dependencies": {
+    ".NETFramework,Version=v4.8": {
+      "Microsoft.AspNet.WebApi": {
+        "type": "Direct",
+        "requested": "[5.2.9, 5.2.9]",
+        "resolved": "5.2.9",
+        "contentHash": "jVd73J1CWj1iRf72WWnn6vkLH63QbyAJT/M16UfmF6uEsS6bK2mJz3gfFg66Au4p8uA7FgaZiWkh5wqRGNXMjQ=="
+      },
+      "Microsoft.AspNet.WebApi.Client": {
+        "type": "Direct",
+        "requested": "[5.2.9, 5.2.9]",
+        "resolved": "5.2.9",
+        "contentHash": "cuVhPjjNMSEFpKXweMNBbsG4RUFuuZpFBm8tSyw309U9JEjcnbB6n3EPb4xwgcy9bJ38ctIbv5G8zXUBhlrPWw=="
+      },
+      "Microsoft.AspNet.WebApi.Core": {
+        "type": "Direct",
+        "requested": "[5.2.9, 5.2.9]",
+        "resolved": "5.2.9",
+        "contentHash": "9C0/gBUeMBjorRFSmR5Z2j5wznf9BP5SddN+OZE7X0BpXgivBZTZ42d0h8tIjJzSLHYVCU4HZBf51+cidCY4fQ=="
+      },
+      "Microsoft.AspNet.WebApi.WebHost": {
+        "type": "Direct",
+        "requested": "[5.2.9, 5.2.9]",
+        "resolved": "5.2.9",
+        "contentHash": "+mQWEe0/mWdEccKszPI7QOLduYH0ZSl1AjdRXLlM6jKrhS3LnLMBg2WuLEIlQcCS7GCs4GU5LlhycArgg3j84g=="
+      },
+      "Newtonsoft.Json": {
+        "type": "Direct",
+        "requested": "[13.0.1, 13.0.1]",
+        "resolved": "13.0.1",
+        "contentHash": "ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A=="
+      }
+    }
+  }
+}

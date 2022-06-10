@@ -53,7 +53,8 @@ namespace IISExpressBootstrapper
 
         public void Dispose()
         {
-            if (process == null) return;
+            if (process == null)
+                return;
 
             var toDispose = process;
             process = null;

@@ -1,15 +1,37 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
-		<Title>IIS Express Bootstrapper</Title>
-		<Authors>Abner das Dores</Authors>
-		<Version>2.0.0</Version>
-		<PackageProjectUrl>https://github.com/abnerdasdores/iisexpress-bootstrapper</PackageProjectUrl>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<Description>IIS Express Bootstrapper is a very simple library built to make easy run IIS Express from your C# code for a web application project. It's a great library for acceptance tests.</Description>
-		<Product>IIS Express Bootstrapper</Product>
-		<Copyright>Copyright © 2014-2022</Copyright>
-	</PropertyGroup>
-	<ItemGroup>
-	</ItemGroup>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <Title>IIS Express Bootstrapper</Title>
+        <PackageID>Lambda3.IISExpressBootstrapper</PackageID>
+        <Authors>Abner das Dores, Giovanni Bassi and others</Authors>
+        <VersionPrefix Condition="'$(VersionPrefix)' == ''">2.0.0</VersionPrefix>
+        <VersionSuffix Condition="'$(VersionSuffix)' != ''">-$(VersionSuffix)</VersionSuffix>
+        <Version Condition="'$(Version)' == ''">$(VersionPrefix)$(VersionSuffix)</Version>
+        <PackageProjectUrl>https://github.com/abnerdasdores/iisexpress-bootstrapper</PackageProjectUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Description>IIS Express Bootstrapper is a very simple library built to make easy run IIS Express from your C# code for a web application project. It's a great library for acceptance tests.</Description>
+        <Product>IIS Express Bootstrapper</Product>
+        <Copyright>Copyright © 2014-2022</Copyright>
+        <IncludeSymbols>true</IncludeSymbols>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <IsPackable>true</IsPackable>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(CI)' == 'true'">
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+        <Configuration>Release</Configuration>
+        <RestoreLockedMode>true</RestoreLockedMode>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="../../README.md" Pack="true" PackagePath="\" Visible="false"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
 </Project>
