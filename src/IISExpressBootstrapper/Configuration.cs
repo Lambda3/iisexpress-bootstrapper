@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace IISExpressBootstrapper
@@ -12,5 +12,7 @@ namespace IISExpressBootstrapper
         public IDictionary<string, string> EnvironmentVariables { get; set; }
 
         public Action<string> Output { get; set; }
+
+        public bool PreferX64 { get; set; }
     }
 }

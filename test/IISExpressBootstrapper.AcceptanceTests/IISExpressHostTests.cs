@@ -16,7 +16,7 @@ namespace IISExpressBootstrapper.AcceptanceTests
         public async Task OneTimeSetUp()
         {
             environmentVariables = new Dictionary<string, string> { { "X", "a" }, { "Y", "b" } };
-            host = IISExpressHost.Start(new ConfigFileParameters { TraceLevel = TraceLevel.Info, Systray = false, ConfigFile = SetUpFixture.FileApplicationHostPath, SiteName = "SampleApp" }, environmentVariables);
+            host = new IISExpressHost(new ConfigFileParameters { TraceLevel = TraceLevel.Info, Systray = false, ConfigFile = SetUpFixture.FileApplicationHostPath, SiteName = "SampleApp" }, environmentVariables).Start();
             using var httpClient = new HttpClient();
             var startTime = DateTime.Now;
             while (true)
@@ -69,14 +69,14 @@ namespace IISExpressBootstrapper.AcceptanceTests
         public void ThrowExceptionWhenNotFoundIISExpressPath()
         {
             const string iisExpressPath = @"Z:\Foo\Bar\iis.exe";
-            var action = () => IISExpressHost.Start(null, iisExpressPath: iisExpressPath);
+            var action = () => new IISExpressHost(null, iisExpressPath: iisExpressPath);
             action.Should().Throw<IISExpressNotFoundException>();
         }
 
         [Test]
         public void ThrowExceptionWhenNotFoundWebApplicationPath()
         {
-            var action = () => IISExpressHost.Start("Foo.Bar.Web", 8088);
+            var action = () => new IISExpressHost("Foo.Bar.Web", 8088);
             action.Should().Throw<DirectoryNotFoundException>()
                 .WithMessage("Could not infer the web application folder path.");
         }
@@ -85,8 +85,8 @@ namespace IISExpressBootstrapper.AcceptanceTests
         public void StartingWithInvalidConfigurationShouldWriteMessage()
         {
             string s = null;
-            IISExpressHost.Start(new ConfigFileParameters { ConfigFile = "", SiteName = "Does not exist" },
-                output: message => { s = message; });
+            new IISExpressHost(new ConfigFileParameters { ConfigFile = "", SiteName = "Does not exist" },
+                output: message => { s = message; }).Start();
             s.Should().NotBeNullOrEmpty();
         }
 
@@ -106,10 +106,25 @@ namespace IISExpressBootstrapper.AcceptanceTests
         [Test]
         public void StartingAndKillingAProcessShouldShowHostNotToBeRunning()
         {
-            var brokenHost = IISExpressHost.Start(new ConfigFileParameters { ConfigFile = "", SiteName = "Does not exist" });
+            var brokenHost = new IISExpressHost(new ConfigFileParameters { ConfigFile = "", SiteName = "Does not exist" }).Start();
             using var process = Process.GetProcessById(brokenHost.ProcessId);
             process.Kill();
             brokenHost.IsRunning.Should().BeFalse();
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ShouldFindCorrectIISPath(bool preferX64)
+        {
+            if (!Environment.Is64BitProcess)
+                return;
+            if (Environment.GetEnvironmentVariable("ProgramFiles") == null)
+                throw new Exception("Missing ProgramFiles environment variable.");
+            if (Environment.GetEnvironmentVariable("ProgramFiles(x86)") == null)
+                throw new Exception("Missing ProgramFiles(x86) environment variable.");
+            var host = new IISExpressHost(new ConfigFileParameters { TraceLevel = TraceLevel.Info, Systray = false, ConfigFile = SetUpFixture.FileApplicationHostPath, SiteName = "SampleApp" }, environmentVariables, preferX64: preferX64);
+            host.IISExpressPath.Should().Be($@"{Environment.GetEnvironmentVariable(preferX64 ? "ProgramFiles" : "ProgramFiles(x86)")}\IIS Express\IISExpress.exe");
         }
     }
 }

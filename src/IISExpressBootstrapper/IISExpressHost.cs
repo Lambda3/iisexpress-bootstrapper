@@ -1,26 +1,30 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace IISExpressBootstrapper
 {
     public sealed class IISExpressHost : IDisposable
     {
+        [Obsolete("Use new IISExpressHost(..).Start().")]
         public static IISExpressHost Start(string webApplicationName, int portNumber,
-            IDictionary<string, string> environmentVariables = null, string iisExpressPath = null, Action<string> output = null) =>
-            new IISExpressHost(webApplicationName, portNumber, environmentVariables, iisExpressPath, output);
+            IDictionary<string, string> environmentVariables = null, string iisExpressPath = null, Action<string> output = null, bool preferX64 = false) =>
+            new IISExpressHost(webApplicationName, portNumber, environmentVariables, iisExpressPath, output, preferX64).Start();
 
+        [Obsolete("Use new IISExpressHost(..).Start().")]
         public static IISExpressHost Start(Parameters parameters, IDictionary<string, string> environmentVariables = null,
-            string iisExpressPath = null, Action<string> output = null) =>
-            new IISExpressHost(parameters, environmentVariables, iisExpressPath, output);
+            string iisExpressPath = null, Action<string> output = null, bool preferX64 = false) =>
+            new IISExpressHost(parameters, environmentVariables, iisExpressPath, output, preferX64).Start();
 
-        private IISExpressProcess process;
+        private readonly IISExpressProcess iisProcess;
 
-        public bool IsRunning => process.IsRunning;
+        public bool IsRunning => iisProcess.IsRunning;
 
-        public int ProcessId => process.ProcessId;
+        public int ProcessId => iisProcess.ProcessId;
+
+        public string IISExpressPath => iisProcess.IISExpressPath;
 
         public IISExpressHost(string webApplicationName, int portNumber,
-            IDictionary<string, string> environmentVariables = null, string iisExpressPath = null, Action<string> output = null)
+            IDictionary<string, string> environmentVariables = null, string iisExpressPath = null, Action<string> output = null, bool preferX64 = false)
         {
             var configuration = new Configuration
             {
@@ -32,34 +36,33 @@ namespace IISExpressBootstrapper
                     Port = portNumber,
                     Systray = false
                 },
-                Output = output
+                Output = output,
+                PreferX64 = preferX64
             };
-
-            process = new IISExpressProcess(configuration);
+            iisProcess = new IISExpressProcess(configuration);
         }
 
-        private IISExpressHost(Parameters parameters, IDictionary<string, string> environmentVariables = null,
-            string iisExpressPath = null, Action<string> output = null)
+        public IISExpressHost(Parameters parameters, IDictionary<string, string> environmentVariables = null,
+            string iisExpressPath = null, Action<string> output = null, bool preferX64 = false)
         {
             var configuration = new Configuration
             {
                 EnvironmentVariables = environmentVariables,
                 IISExpressPath = iisExpressPath,
                 ProcessParameters = parameters,
-                Output = output
+                Output = output,
+                PreferX64 = preferX64
             };
-            process = new IISExpressProcess(configuration);
+            iisProcess = new IISExpressProcess(configuration);
         }
 
-        public void Dispose()
+        public IISExpressHost Start()
         {
-            if (process == null)
-                return;
-
-            var toDispose = process;
-            process = null;
-
-            toDispose.Dispose();
+            if (!iisProcess.IsRunning)
+                iisProcess.Start();
+            return this;
         }
+
+        public void Dispose() => iisProcess?.Dispose();
     }
 }

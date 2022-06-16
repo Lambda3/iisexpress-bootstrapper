@@ -27,6 +27,7 @@
     </PropertyGroup>
     <ItemGroup>
         <None Include="../../README.md" Pack="true" PackagePath="\" Visible="false"/>
+        <InternalsVisibleTo Include="IISExpressBootstrapper.AcceptanceTests" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
