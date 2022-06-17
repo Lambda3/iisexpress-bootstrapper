@@ -27,13 +27,19 @@ namespace IISExpressBootstrapper
                 Arguments = configuration.ProcessParameters.ToString(),
                 LoadUserProfile = false,
                 UseShellExecute = false,
-                RedirectStandardOutput = output != null
+                RedirectStandardOutput = output != null,
+                RedirectStandardError = output != null
             };
-
             if (configuration.EnvironmentVariables != null)
                 foreach (var environmentVariable in configuration.EnvironmentVariables)
                     processStartInfo.EnvironmentVariables.Add(environmentVariable.Key, environmentVariable.Value);
         }
+
+        public event EventHandler Exited;
+
+        private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e) => output(e.Data);
+
+        private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e) => output(e.Data);
 
         private static string GetDefaultIISExpressPath(bool preferX64)
         {
@@ -53,16 +59,18 @@ namespace IISExpressBootstrapper
         public void Start()
         {
             process = Process.Start(processStartInfo);
+            process.EnableRaisingEvents = true;
+            process.Exited += Process_Exited;
             if (processStartInfo.RedirectStandardOutput)
             {
-                var reader = process.StandardOutput;
-                while (reader.Peek() > -1)
-                {
-                    var message = reader.ReadToEnd();
-                    output(message);
-                }
+                process.OutputDataReceived += Process_OutputDataReceived;
+                process.ErrorDataReceived += Process_ErrorDataReceived;
+                process.BeginErrorReadLine();
+                process.BeginOutputReadLine();
             }
         }
+
+        private void Process_Exited(object sender, EventArgs e) => Exited?.Invoke(this, e);
 
         public void Dispose()
         {

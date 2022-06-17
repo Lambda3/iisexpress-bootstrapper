@@ -11,12 +11,19 @@ namespace IISExpressBootstrapper.AcceptanceTests
     {
         private IDictionary<string, string> environmentVariables;
         private IISExpressHost host;
+        private string messages = "";
 
         [OneTimeSetUp]
         public async Task OneTimeSetUp()
         {
             environmentVariables = new Dictionary<string, string> { { "X", "a" }, { "Y", "b" } };
-            host = new IISExpressHost(new ConfigFileParameters { TraceLevel = TraceLevel.Info, Systray = false, ConfigFile = SetUpFixture.FileApplicationHostPath, SiteName = "SampleApp" }, environmentVariables).Start();
+            host = new IISExpressHost(new ConfigFileParameters
+            {
+                TraceLevel = TraceLevel.Info,
+                Systray = false,
+                ConfigFile = SetUpFixture.FileApplicationHostPath,
+                SiteName = "SampleApp"
+            }, environmentVariables, output: message => { messages += message; }).Start();
             using var httpClient = new HttpClient();
             var startTime = DateTime.Now;
             while (true)
@@ -66,6 +73,26 @@ namespace IISExpressBootstrapper.AcceptanceTests
         }
 
         [Test]
+        public void ShouldWriteMessages() => messages.Should().NotBeNullOrEmpty();
+
+        [Test]
+        public void IfProcessIsRunningShouldShowIt() => host.IsRunning.Should().BeTrue();
+
+        [Test]
+        public void IfProcessIsRunningShouldShowProcessId() => host.ProcessId.Should().BeGreaterThan(0);
+
+        [Test]
+        public void IfProcessIsRunningShouldShowInProcessesList()
+        {
+            using var process = Process.GetProcessById(host.ProcessId);
+            process.Should().NotBeNull();
+        }
+    }
+
+    [TestFixture]
+    public class IndependentIISExpressHostTests
+    {
+        [Test]
         public void ThrowExceptionWhenNotFoundIISExpressPath()
         {
             const string iisExpressPath = @"Z:\Foo\Bar\iis.exe";
@@ -82,25 +109,20 @@ namespace IISExpressBootstrapper.AcceptanceTests
         }
 
         [Test]
-        public void StartingWithInvalidConfigurationShouldWriteMessage()
+        public async Task StartingWithInvalidConfigurationShouldWriteMessage()
         {
-            string s = null;
-            new IISExpressHost(new ConfigFileParameters { ConfigFile = "", SiteName = "Does not exist" },
-                output: message => { s = message; }).Start();
-            s.Should().NotBeNullOrEmpty();
-        }
-
-        [Test]
-        public void IfProcessIsRunningShouldShowIt() => host.IsRunning.Should().BeTrue();
-
-        [Test]
-        public void IfProcessIsRunningShouldShowProcessId() => host.ProcessId.Should().BeGreaterThan(0);
-
-        [Test]
-        public void IfProcessIsRunningShouldShowInProcessesList()
-        {
-            using var process = Process.GetProcessById(host.ProcessId);
-            process.Should().NotBeNull();
+            var s = "";
+            var gotMessage = false;
+            using (var host = new IISExpressHost(new ConfigFileParameters { ConfigFile = "", SiteName = "Does not exist" },
+                output: message => { s += message; gotMessage = true; }))
+            {
+                var semaphore = new SemaphoreSlim(0, 1);
+                host.Exited += (_, _) => semaphore.Release();
+                host.Start();
+                await semaphore.WaitAsync(TimeSpan.FromSeconds(5));
+            }
+            s.Should().NotBeEmpty();
+            gotMessage.Should().BeTrue();
         }
 
         [Test]
@@ -123,7 +145,7 @@ namespace IISExpressBootstrapper.AcceptanceTests
                 throw new Exception("Missing ProgramFiles environment variable.");
             if (Environment.GetEnvironmentVariable("ProgramFiles(x86)") == null)
                 throw new Exception("Missing ProgramFiles(x86) environment variable.");
-            var host = new IISExpressHost(new ConfigFileParameters { TraceLevel = TraceLevel.Info, Systray = false, ConfigFile = SetUpFixture.FileApplicationHostPath, SiteName = "SampleApp" }, environmentVariables, preferX64: preferX64);
+            var host = new IISExpressHost(new ConfigFileParameters { TraceLevel = TraceLevel.Info, Systray = false, ConfigFile = SetUpFixture.FileApplicationHostPath, SiteName = "SampleApp" }, preferX64: preferX64);
             host.IISExpressPath.Should().Be($@"{Environment.GetEnvironmentVariable(preferX64 ? "ProgramFiles" : "ProgramFiles(x86)")}\IIS Express\IISExpress.exe");
         }
     }

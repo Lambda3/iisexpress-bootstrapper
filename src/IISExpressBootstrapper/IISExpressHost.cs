@@ -23,6 +23,8 @@ namespace IISExpressBootstrapper
 
         public string IISExpressPath => iisProcess.IISExpressPath;
 
+        public event EventHandler Exited;
+
         public IISExpressHost(string webApplicationName, int portNumber,
             IDictionary<string, string> environmentVariables = null, string iisExpressPath = null, Action<string> output = null, bool preferX64 = false)
         {
@@ -54,7 +56,10 @@ namespace IISExpressBootstrapper
                 PreferX64 = preferX64
             };
             iisProcess = new IISExpressProcess(configuration);
+            iisProcess.Exited += IISProcess_Exited;
         }
+
+        private void IISProcess_Exited(object sender, EventArgs e) => Exited?.Invoke(this, e);
 
         public IISExpressHost Start()
         {
