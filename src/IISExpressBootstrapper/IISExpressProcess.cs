@@ -43,10 +43,17 @@ namespace IISExpressBootstrapper
 
         private static string GetDefaultIISExpressPath(bool preferX64)
         {
-            var iisExpressPath = $@"{Environment.GetEnvironmentVariable("ProgramFiles")}\IIS Express\IISExpress.exe";
-            string X64Path() => File.Exists(iisExpressPath) ? iisExpressPath : throw new IISExpressNotFoundException(iisExpressPath);
+            string X64Path()
+            {
+                var iisExpressPath = $@"{Environment.GetEnvironmentVariable("ProgramW6432")}\IIS Express\IISExpress.exe";
+                return File.Exists(iisExpressPath) ? iisExpressPath : throw new IISExpressNotFoundException(iisExpressPath);
+            }
             if (preferX64)
+            {
+                if (!Environment.Is64BitOperatingSystem)
+                    throw new Exception("Can't prefer x64 IIS in 32 bits system.");
                 return X64Path();
+            }
             var programFilesX86 = Environment.GetEnvironmentVariable("ProgramFiles(x86)");
             if (programFilesX86 == null)
                 return X64Path();

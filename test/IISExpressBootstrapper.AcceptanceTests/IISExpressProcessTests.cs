@@ -11,8 +11,8 @@ namespace IISExpressBootstrapper.AcceptanceTests
         {
             if (!Environment.Is64BitProcess)
                 return;
-            if (Environment.GetEnvironmentVariable("ProgramFiles") == null)
-                throw new Exception("Missing ProgramFiles environment variable.");
+            if (Environment.GetEnvironmentVariable("ProgramW6432") == null)
+                throw new Exception("Missing ProgramW6432 environment variable.");
             if (Environment.GetEnvironmentVariable("ProgramFiles(x86)") == null)
                 throw new Exception("Missing ProgramFiles(x86) environment variable.");
             var configuration = new Configuration
@@ -21,7 +21,7 @@ namespace IISExpressBootstrapper.AcceptanceTests
                 PreferX64 = true
             };
             var iisExpressProcess = new IISExpressProcess(configuration);
-            iisExpressProcess.IISExpressPath.Should().Be($@"{Environment.GetEnvironmentVariable("ProgramFiles")}\IIS Express\IISExpress.exe");
+            iisExpressProcess.IISExpressPath.Should().Be($@"{Environment.GetEnvironmentVariable("ProgramW6432")}\IIS Express\IISExpress.exe");
         }
 
         [Test]
@@ -29,8 +29,8 @@ namespace IISExpressBootstrapper.AcceptanceTests
         {
             if (!Environment.Is64BitProcess)
                 return;
-            if (Environment.GetEnvironmentVariable("ProgramFiles") == null)
-                throw new Exception("Missing ProgramFiles environment variable.");
+            if (Environment.GetEnvironmentVariable("ProgramW6432") == null)
+                throw new Exception("Missing ProgramW6432 environment variable.");
             if (Environment.GetEnvironmentVariable("ProgramFiles(x86)") == null)
                 throw new Exception("Missing ProgramFiles(x86) environment variable.");
             var configuration = new Configuration

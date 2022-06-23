@@ -12,6 +12,7 @@ namespace IISExpressBootstrapper.AcceptanceTests
         private IDictionary<string, string> environmentVariables;
         private IISExpressHost host;
         private string messages = "";
+        private HttpResponseMessage response;
 
         [OneTimeSetUp]
         public async Task OneTimeSetUp()
@@ -30,7 +31,7 @@ namespace IISExpressBootstrapper.AcceptanceTests
             {
                 try
                 {
-                    using var response = await httpClient.GetAsync("http://localhost:8088/", new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token);
+                    response = await httpClient.GetAsync("http://localhost:8088/", new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token);
                     break;
                 }
                 catch (Exception ex) when (ex is TaskCanceledException or HttpRequestException)
@@ -61,6 +62,9 @@ namespace IISExpressBootstrapper.AcceptanceTests
         }
 
         [Test]
+        public void ShouldHaveASuccessfulResponse() => response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+
+        [Test]
         [TestCase("X", "a")]
         [TestCase("Y", "b")]
         public async Task ShouldSetEnvironmentVariablesAsync(string variable, string expected)
@@ -76,10 +80,10 @@ namespace IISExpressBootstrapper.AcceptanceTests
         public void ShouldWriteMessages() => messages.Should().NotBeNullOrEmpty();
 
         [Test]
-        public void IfProcessIsRunningShouldShowIt() => host.IsRunning.Should().BeTrue();
+        public void IfProcessIsRunningShouldShowIt() => host.IsRunning.Should().BeTrue($"Messages:\n{messages}");
 
         [Test]
-        public void IfProcessIsRunningShouldShowProcessId() => host.ProcessId.Should().BeGreaterThan(0);
+        public void IfProcessIsRunningShouldShowProcessId() => host.ProcessId.Should().BeGreaterThan(0, $"Messages:\n{messages}");
 
         [Test]
         public void IfProcessIsRunningShouldShowInProcessesList()
@@ -141,7 +145,7 @@ namespace IISExpressBootstrapper.AcceptanceTests
         {
             if (!Environment.Is64BitProcess)
                 return;
-            if (Environment.GetEnvironmentVariable("ProgramFiles") == null)
+            if (Environment.GetEnvironmentVariable("ProgramW6432") == null)
                 throw new Exception("Missing ProgramFiles environment variable.");
             if (Environment.GetEnvironmentVariable("ProgramFiles(x86)") == null)
                 throw new Exception("Missing ProgramFiles(x86) environment variable.");
