@@ -31,7 +31,7 @@ namespace IISExpressBootstrapper.AcceptanceTests
             {
                 try
                 {
-                    response = await httpClient.GetAsync("http://localhost:8088/", new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token);
+                    response = await httpClient.GetAsync("http://localhost:8088/api/sampleapi/10", new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token);
                     break;
                 }
                 catch (Exception ex) when (ex is TaskCanceledException or HttpRequestException)
@@ -49,20 +49,18 @@ namespace IISExpressBootstrapper.AcceptanceTests
         }
 
         [OneTimeTearDown]
-        public void TearDown() => host?.Dispose();
-
-        [Test]
-        public async Task ShouldRunTheWebApplication()
+        public void TearDown()
         {
-            using var client = new HttpClient();
-            using var response = await client.GetAsync("http://localhost:8088/api/sampleapi/10");
-            var content = JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            content.Should().Be("You sent me 10");
+            response?.Dispose();
+            host?.Dispose();
         }
 
         [Test]
-        public void ShouldHaveASuccessfulResponse() => response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        public async Task ShouldRunTheWebApplication() =>
+            JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync()).Should().Be("You sent me 10");
+
+        [Test]
+        public void ShouldHaveASuccessfulResponse() => response.EnsureSuccessStatusCode();
 
         [Test]
         [TestCase("X", "a")]
