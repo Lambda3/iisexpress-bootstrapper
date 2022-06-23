@@ -59,7 +59,7 @@ jobs:
         name: Build
       - run: |
           msbuild .\sampleapp\SampleApp.sln
-          dotnet test ./test/IISExpressBootstrapper.AcceptanceTests/IISExpressBootstrapper.AcceptanceTests.csproj
+          dotnet test --no-build ./test/IISExpressBootstrapper.AcceptanceTests/IISExpressBootstrapper.AcceptanceTests.csproj
         name: Test
 
   deploy:

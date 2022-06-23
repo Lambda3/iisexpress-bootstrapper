@@ -43,7 +43,6 @@ namespace IISExpressBootstrapper.AcceptanceTests
                         throw;
                     }
                     Thread.Sleep(5_000);
-                    break;
                 }
             }
         }
