@@ -38,9 +38,9 @@ namespace IISExpressBootstrapper.AcceptanceTests
                 {
                     if (DateTime.Now - startTime > TimeSpan.FromSeconds(30))
                     {
-                        Debug.WriteLine("Could not make the initial request for 30 seconds.");
-                        Console.WriteLine("Could not make the initial request for 30 seconds.");
-                        throw;
+                        Debug.WriteLine($"Could not make the initial request for 30 seconds. Messages:\n{messages}");
+                        Console.WriteLine($"Could not make the initial request for 30 seconds. Messages:\n{messages}");
+                        throw new Exception($"Could not make the initial request for 30 seconds. Messages:\n{messages}");
                     }
                     Thread.Sleep(5_000);
                 }
@@ -56,10 +56,10 @@ namespace IISExpressBootstrapper.AcceptanceTests
 
         [Test]
         public async Task ShouldRunTheWebApplication() =>
-            JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync()).Should().Be("You sent me 10");
+            JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync()).Should().Be("You sent me 10", $"Messages:\n{messages}");
 
         [Test]
-        public void ShouldHaveASuccessfulResponse() => response.EnsureSuccessStatusCode();
+        public void ShouldHaveASuccessfulResponse() => response.StatusCode.Should().Be(HttpStatusCode.OK, $"Messages:\n{messages}");
 
         [Test]
         [TestCase("X", "a")]
@@ -70,11 +70,11 @@ namespace IISExpressBootstrapper.AcceptanceTests
             using var response = await client.PostAsync($"http://localhost:8088/api/sampleapi/{variable}", new StringContent(string.Empty));
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             var content = JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
-            content.Should().Be(expected);
+            content.Should().Be(expected, $"Messages:\n{messages}");
         }
 
         [Test]
-        public void ShouldWriteMessages() => messages.Should().NotBeNullOrEmpty();
+        public void ShouldWriteMessages() => messages.Should().NotBeNullOrEmpty($"Messages:\n{messages}");
 
         [Test]
         public void IfProcessIsRunningShouldShowIt() => host.IsRunning.Should().BeTrue($"Messages:\n{messages}");
@@ -86,7 +86,7 @@ namespace IISExpressBootstrapper.AcceptanceTests
         public void IfProcessIsRunningShouldShowInProcessesList()
         {
             using var process = Process.GetProcessById(host.ProcessId);
-            process.Should().NotBeNull();
+            process.Should().NotBeNull($"Messages:\n{messages}");
         }
     }
 
