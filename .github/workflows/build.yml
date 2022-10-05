@@ -36,7 +36,7 @@ jobs:
     name: Build application
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v1.9.0
         with:
@@ -71,7 +71,7 @@ jobs:
       run:
         working-directory: src/IISExpressBootstrapper
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v1.9.0
         with:
