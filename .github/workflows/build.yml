@@ -54,7 +54,7 @@ jobs:
           dotnet restore --locked-mode
           nuget restore .\sampleapp\SampleApp.sln
       - name: Add msbuild
-        uses: microsoft/setup-msbuild@v1.1
+        uses: microsoft/setup-msbuild@v1.3
       - run: dotnet build
         name: Build
       - run: |
